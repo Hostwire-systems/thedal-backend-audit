@@ -1,0 +1,36 @@
+name: Daily PostgreSQL Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Runs daily at 2:00 AM UTC
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add PostgreSQL APT repo and install version 17 client
+        run: |  
+            sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+            wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client-17
+
+      - name: Dump PostgreSQL Database
+        env:
+          PGPASSWORD: ${{ secrets.PG_PASSWORD }}
+        run: |
+          pg_dump -h ${{ secrets.PG_HOST }} -p ${{ secrets.PG_PORT }} \
+            -U ${{ secrets.PG_USER }} -d ${{ secrets.PG_DB }} \
+            -F c -f thedal_backup.dump
+
+      - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --exact-timestamps
+        env:
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: ./
+          DEST_DIR: backups/thedal/$(date +%F)/

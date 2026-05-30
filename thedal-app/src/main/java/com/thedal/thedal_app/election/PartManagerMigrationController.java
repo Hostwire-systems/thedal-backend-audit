@@ -1,0 +1,173 @@
+package com.thedal.thedal_app.election;
+
+import com.thedal.thedal_app.migration.MigrationJob;
+import com.thedal.thedal_app.response.ThedalResponse;
+import com.thedal.thedal_app.response.ThedalSuccess;
+import com.thedal.thedal_app.general.RequestDetailsService;
+import com.thedal.thedal_app.thedal_exception.ThedalException;
+import com.thedal.thedal_app.thedal_exception.ThedalError;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * REST controller for PartManager migration operations between PostgreSQL and MongoDB
+ */
+@RestController
+@RequestMapping("/api/v1")
+@Tag(name = "PartManager Migration", description = "Endpoints for managing PartManager data migration")
+@Slf4j
+public class PartManagerMigrationController {
+
+    @Autowired
+    private PartManagerMigrationService partManagerMigrationService;
+
+    @Autowired
+    private RequestDetailsService requestDetails;
+
+    @PostMapping("/election/{electionId}/part-manager/migrate")
+    @Operation(summary = "Start PartManager migration from PostgreSQL to MongoDB")
+    public ThedalResponse<Map<String, String>> migratePartManager(
+            @PathVariable("electionId") Long electionId,
+            @RequestParam(defaultValue = "100") int batchSize) {
+        
+        // Validate account access
+        Long accountId = requestDetails.getCurrentAccountId();
+        if (accountId == null) {
+            log.error("Account id not found, unauthorized access.");
+            return new ThedalResponse<>(ThedalError.ACCOUNT_ID_NOT_CREATED);
+        }
+
+        log.info("Starting PartManager migration for accountId={}, electionId={}", accountId, electionId);
+
+        try {
+            String jobId = partManagerMigrationService.startMigration(accountId, electionId, batchSize);
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("jobId", jobId);
+            response.put("message", "PartManager migration started successfully");
+            
+            return new ThedalResponse<>(ThedalSuccess.DATA_MIGRATION_INITIATED, response);
+            
+        } catch (Exception e) {
+            log.error("Error starting PartManager migration: ", e);
+            return new ThedalResponse<>(ThedalError.DATA_MIGRATION_FAILED);
+        }
+    }
+
+    @GetMapping("/election/{electionId}/part-manager/migration-status/{jobId}")
+    @Operation(summary = "Get PartManager migration status")
+    public ThedalResponse<Map<String, Object>> getPartManagerMigrationStatus(
+            @PathVariable("electionId") Long electionId,
+            @PathVariable("jobId") String jobId) {
+        
+        // Validate account access
+        Long accountId = requestDetails.getCurrentAccountId();
+        if (accountId == null) {
+            log.error("Account id not found, unauthorized access.");
+            return new ThedalResponse<>(ThedalError.ACCOUNT_ID_NOT_CREATED);
+        }
+
+        log.debug("Getting PartManager migration status for jobId={}", jobId);
+
+        try {
+            MigrationJob job = partManagerMigrationService.getMigrationJob(jobId);
+            
+            if (job == null) {
+                return new ThedalResponse<>(ThedalError.USER_NOT_FOUND);
+            }
+
+            // Verify job belongs to the correct account and election
+            if (!job.getAccountId().equals(accountId) || !job.getElectionId().equals(electionId)) {
+                return new ThedalResponse<>(ThedalError.UNAUTHORIZED_ACCESS);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("jobId", job.getJobId());
+            response.put("status", job.getStatus());
+            response.put("totalRecords", job.getTotalRecords());
+            response.put("processedRecords", job.getProcessedRecords());
+            response.put("failedRecords", job.getFailedRecords());
+            response.put("startTime", job.getStartTime());
+            response.put("endTime", job.getEndTime());
+            response.put("errorMessage", job.getErrorMessage());
+            
+            return new ThedalResponse<>(ThedalSuccess.SUCCESS, response);
+            
+        } catch (Exception e) {
+            log.error("Error getting migration status: ", e);
+            return new ThedalResponse<>(ThedalError.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/election/{electionId}/part-manager/migration-cancel/{jobId}")
+    @Operation(summary = "Cancel PartManager migration")
+    public ThedalResponse<Map<String, String>> cancelPartManagerMigration(
+            @PathVariable("electionId") Long electionId,
+            @PathVariable("jobId") String jobId) {
+        
+        // Validate account access
+        Long accountId = requestDetails.getCurrentAccountId();
+        if (accountId == null) {
+            log.error("Account id not found, unauthorized access.");
+            return new ThedalResponse<>(ThedalError.ACCOUNT_ID_NOT_CREATED);
+        }
+
+        log.info("Cancelling PartManager migration for jobId={}", jobId);
+
+        try {
+            MigrationJob job = partManagerMigrationService.getMigrationJob(jobId);
+            
+            if (job == null) {
+                return new ThedalResponse<>(ThedalError.USER_NOT_FOUND);
+            }
+
+            // Verify job belongs to the correct account and election
+            if (!job.getAccountId().equals(accountId) || !job.getElectionId().equals(electionId)) {
+                return new ThedalResponse<>(ThedalError.UNAUTHORIZED_ACCESS);
+            }
+
+            partManagerMigrationService.cancelMigration(jobId);
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("jobId", jobId);
+            response.put("message", "PartManager migration cancelled successfully");
+            
+            return new ThedalResponse<>(ThedalSuccess.SUCCESS, response);
+            
+        } catch (Exception e) {
+            log.error("Error cancelling migration: ", e);
+            return new ThedalResponse<>(ThedalError.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/election/{electionId}/part-manager/migration-stats")
+    @Operation(summary = "Get PartManager migration statistics")
+    public ThedalResponse<Map<String, Object>> getPartManagerMigrationStats(
+            @PathVariable("electionId") Long electionId) {
+        
+        // Validate account access
+        Long accountId = requestDetails.getCurrentAccountId();
+        if (accountId == null) {
+            log.error("Account id not found, unauthorized access.");
+            return new ThedalResponse<>(ThedalError.ACCOUNT_ID_NOT_CREATED);
+        }
+
+        log.debug("Getting PartManager migration stats for accountId={}, electionId={}", accountId, electionId);
+
+        try {
+            Map<String, Object> stats = partManagerMigrationService.getMigrationStats(accountId, electionId);
+            return new ThedalResponse<>(ThedalSuccess.SUCCESS, stats);
+            
+        } catch (Exception e) {
+            log.error("Error getting migration stats: ", e);
+            return new ThedalResponse<>(ThedalError.INTERNAL_SERVER_ERROR);
+        }
+    }
+}

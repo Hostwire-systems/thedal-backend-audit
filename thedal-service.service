@@ -1,0 +1,15 @@
+[Unit]
+Description=Thedal API Spring Boot Application
+After=syslog.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/actions-runner/_work/thedal-backend/thedal-backend/thedal-app/
+ExecStart=/home/ec2-user/actions-runner/_work/thedal-backend/thedal-backend/thedal-app/mvnw spring-boot:run
+KillMode=process
+SuccessExitStatus=143
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

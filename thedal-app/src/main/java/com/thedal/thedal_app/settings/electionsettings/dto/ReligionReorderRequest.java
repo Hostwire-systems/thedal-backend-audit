@@ -1,0 +1,13 @@
+package com.thedal.thedal_app.settings.electionsettings.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ReligionReorderRequest {
+	
+	private Long religionId;
+    private Integer newOrderIndex;
+
+}

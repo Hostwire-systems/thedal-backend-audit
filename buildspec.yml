@@ -1,0 +1,40 @@
+
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: ap-south-1
+    REPOSITORY_NAME: "thedal-cf"
+
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - export REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPOSITORY_NAME
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - ls -l
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Creating image-definition file"
+      #- printf '{"imageDefinitions":[{"name":"thedal-cf","imageUri":"%s"}]}' $ECR_REPOSITORY_URI:latest > image-definition.json
+      - echo '[{"name":"thedal-cf","imageUri":"'$REPOSITORY_URI':latest"}]' > image-definition.json
+      - cat image-definition.json
+artifacts:
+  files:
+    - image-definition.json
+   

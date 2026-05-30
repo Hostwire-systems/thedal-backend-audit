@@ -1,0 +1,317 @@
+package com.thedal.thedal_app.response;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public enum ThedalSuccess {
+
+    SUCCESS(200000, "Successfully Retrieved"),
+
+    EMAIL_VERIFIED(203053, "Email verified successfully"),
+//    EMAIL_VERIFIED(20353, "Email verified successfully"),
+    BASIC_PROFILE_ADDED(20100,"Basic profile added successfully"),
+    FULL_PROFILE_ADDED(20101,"Full profile, added successfully"),
+    PROFILE_PICTURE_UPLOADED(20102,"Profile picture added successfully"),
+    LICENSE_Key_VERIFIED(20103,"License Key Verified successfully"),
+    SMS_SERVICE_ADDED(20104,"SMS Service added successfully"),
+    PROFILE_PICTURE_UPDATED(20105,"profile picture uploaded successfully"),
+    PROFILE_RETRIEVED(20106,"Profile details retrieving successfully"),
+	
+	PROFILE_ROLE_ADDED(20200,"Role added successfully"),
+	PROFILE_ROLE_FETCHED(20201,"Role Fetched Successfully"),
+	PROFILE_ROLE_UPDATED(20202,"Role Updated Successfully"),
+	PROFILE_ROLE_DELETED(20203,"Role Deleted Successfully"),
+	PROFILE_DETAILS_FOUND(20204,"Profile details found successfully"),
+	
+	
+	VOTER_CREATED(50100,"Voter Created Successfully"),
+	VOTER_FOUND(50101,"Voter found Successfully"),
+	VOTER_UPDATED_SUCCESSFULLY(50102,"Voter updated Successfully"),
+	VOTER_DELETED(50103,"Voter deleted Successfully"),
+	MAP_VOTER_LOCATIONS_SUCCESS(50104,"Retrieving Voter locations Successfully"),
+	VOTER_RETRIEVAL_SUCCESS(50104,"Retrieving Voters from third party api"),
+	BULK_VOTERS_CREATED(50105,"Bulk voters created Successfully"),
+	BULK_VOTERS_UPLOAD_IN_QUEUE(50106,"Bulk voters uploaded in queued successfully"),
+	BULK_UPLOAD_DATA_FOUND(50107,"Bulk uploaded found successfully"),
+	BULK_UPLOAD_STARTED(50108,"Bulk upload operation started successfully"),
+	VOTING_STATUS_UPDATED(50109,"Voting status updated successfully"),
+	
+	VOLUNTEER_CREATED(50111,"Volunteers created successfully"),
+	VOLUNTEER_FOUND(50112,"Volunteers found successfully"),
+	VOLUNTEER_UPDATED(50113,"Volunteers details are updated successfully"), 
+	VOLUNTEER_DELETED(50114,"Volunteers deleted successfully"),
+	VOLUNTEERS_BULK_ADDED(50115,"Bulk volunteers are added successfully"),
+	TRACKING_DATA_FETCHED(50116,"Successfully fetched volunteer activities"), 
+	VOLUNTEER_ACTIVITIES_CREATED(50117,"Successfully created volunteer activities"),
+	VOLUNTEER_GET_SUCCESS(50118,"Successfully get all volunteers with locations"),
+	VOLUNTEER_CHECKIN(20119,"Volunteer checked in successfully"),
+	VOLUNTEER_CHECKOUT(20120,"Volunteer checked out successfully"),
+	ACTIVITY_TRACKED(20121,"Volunteer activity tracked"),
+	BULK_VOLUNTEERS_UPLOADED(20122,"Bulk volunteers processed"),
+	VOLUNTEER_CHECKED_IN_OR_OUT_INFO_FETCHED(20123,"volunteer checked in info fetched"),
+	VOLUNTEER_ADDED(20124,"Volunteer added successfully"),
+	
+
+	ELECTION_CREATED(20301,"Election Created successfully"),
+	ELECTION_CREATED_IMAGE(20302,"Election Created successfully and Image uploaded"),
+	ELECTION_UPDATED(20303,"Election updated successfully"),
+	ELECTION_UPDATED_IMAGE(20304,"Election Image updated successfully"),
+	ELECTION_FETCHED(20305,"Election(s) fetched successfully"),
+	ELECTION_DELETED(20305,"Election delete successfully"),
+	IMAGE_UPLOADED_SUCCESSFULLY(20306,"Image uploaded successfully"),
+	IMAGE_FETCHED_SUCCESSFULLY(20307,"Image fetched successfully"),
+	IMAGE_DELETED_SUCCESSFULLY(20308,"Image deleted successfully"),
+	
+	LICENSE_KEY_VERIFIED(50200,"License Key is verified"),
+	
+	BOOTH_CREATED(50300,"Booth created successfully"), 
+	BOOTH_FETCHED(50301,"Booths List Fetched successfully"),
+	BOOTH_DELETED(50302,"Booth deleted successfully"), 
+	BOOTH_UPDATED(50303,"Booths updated successfully"), 
+     
+	TEMPLATE_CREATED(60300,"Template created successfully"),
+	TEMPLATE_FETCHED(60301,"Template Fetched successfully "),
+	TEMPLATE_UPDATED(60302,"Template updated successfully"),
+	TEMPLATE_DELETED(60303,"Templated deleted succesfully"),
+
+	
+	RELIGION_CASTE_SUBCASTE_CREATED(70100, "Religion, caste and sub castes created successfully"),
+	RELIGION_CASTE_SUBCASTE_DATE_RETRIEVED(70101, "Religion, caste and sub castes data retrieved successfully"),
+	RELIGION_HIERARCHY_UPDATED(70102, "Religion, caste and sub castes data updated successfully"),
+	RELIGION_HIERARCHY_DELETED(70103, "deleted Religion id along with related caste and sub castes"),
+	RELIGION_CREATED(70104, "Religion created successfully"),
+	CASTE_CREATED(70105, "Caste created successfully"),
+	SUB_CASTE_CREATED(70106, "SubCaste created successfully"),
+	RELIGIONS_FETCHED(70107, "Religions fetched successfully"),
+	CASTES_FETCHED(70108, "Castes fetched successfully"),
+	SUBCASTES_FETCHED(70109, "SubCastes fetched successfully"),
+	RELIGION_DELETED(70110, "Religions deleted successfully"),
+	CASTE_DELETED(70111, "Castes deleted successfully"), 
+	SUBCASTE_DELETED(70112, "SubCastes deleted successfully"),
+	RELIGION_UPDATED(70113, "Religions updated successfully"),
+	CASTE_UPDATED(70114, "Castes updated successfully"),
+	SUBCASTE_UPDATED(70115, "SubCastes updated successfully"),
+	ELECTION_TYPE_CREATED(70116, "ElectionType created successfully"),
+	ELECTION_TYPE_FETCHED(70117, "ElectionType fetched successfully"),
+	ELECTION_TYPE_UPDATED(70118, "ElectionType updated successfully"),
+	ELECTION_TYPE_DELETED(70119, "ElectionType delete successfully"),
+	
+	PARTY_CREATED(70120, "Party name created successfully"),
+	PARTY_FETCHED(70121, "Party fetched successfully"),
+	PARTY_UPDATED(70122, "Party updated successfully"),
+	PARTY_DELETED(70123, "Party name delete successfully"),
+	BOOTH_VULNERABILITY_CREATED(70124, "Booth Vulnerability created successfully"),
+	BOOTH_VULNERABILITY_FETCHED(70125, "Booth Vulnerability fetched successfully"),
+	BOOTH_VULNERABILITY_UPDATED(70126, "Booth Vulnerability updated successfully"),
+	BOOTH_VULNERABILITY_DELETED(70127, "Booth Vulnerability delete successfully"), 
+	DYNAMIC_FIELD_CREATED(70128, "Dynamic field creatd successfully"),
+	DYNAMIC_FIELD_MAPPED(70128, "Dynamic field mapped successfully"),
+	ELECTION_TYPES_FETCHED(70129, "election types fetched successfully"),
+	PARTIES_FETCHED(70130, "Parties fetched successfully"),
+	VOTER_UPDATED_IMAGE(70131, "Voter image updated successfully"),
+	BOOTH_SLIP_PRINTED(70132, "Booth slip printed successfully"),
+	FAMILY_MAPPING_UPDATED(70133, "family mapping for voter updated successfully"),
+	BOOTHS_UPDATED(70134, "Volunteer assinged booths updated successfully"),
+	FAMILY_MAPPED_VOTERS(70135, "Family mapped voters fetched successfully"),
+	FAMILY_MAPPING_DELETED(70136, "Family mapped deleted successfully"),
+	BOOTH_SLIPS_RETRIEVED(70137, "Booth slips retrived successfully"),
+	TEMPLATES_UPDATED_SUCCESSFULLY(70138, "TemplateId's added successfully"),
+	FAMILY_ID_ASSIGNED(70139, "Family mapping completed successfully"),
+	FAMILY_ID_DELETED(70140, "FamilyId delete for mapped voter successfully"),
+
+	BENEFITSCHEME_CREATED(80131,"BenefitSchemes Created Successfully"),
+	BENEFITSCHEMES_FETCHED(80132,"BenefitSchemes fetched successfully"),
+	BENEFITSCHEME_UPDATED(80133,"BenefitSchemes updated successfully"),
+	BENEFITSCHEME_DELETED(80134,"BenefitSchemes Deleted successfully"),
+	AVAILABILITY_CREATED(90134,"Availability Created Successfully"),
+    AVAILABILITY_FOUND(90135,"Availability Found"),
+	AVAILABILITY_UPDATED(90136,"Availability Updated successfully"),
+	AVAILABILITY_DELETED(90137,"Availability Deleted successfully"),
+	IMAGE_STATUS_UPDATED(90138,"Image status updated successfully"),
+	  
+
+	USERS_RETRIEVED(10131,"Users Retrieved"), 
+	
+	LANGUAGE_CREATED(90139,"Language Created Successfully"),
+	LANGUAGE_FOUND(90140,"language Found"),
+	LANGUAGE_UPDATED(90141,"language Updated successfully"),
+	LANGUAGE_DELETED(90142,"language Deleted successfully"),
+
+	PARTMANAGER_CREATED(10101,"PartManager Created Successfully"),
+	PARTMANAGER_DELETED(10102,"PartManager Deleted Successfully"),
+	PARTMANAGER_UPDATED(10103,"PartManager Updated Successfully"),
+
+
+    CPANEL_DETAILS_UPDATED(20100,"Cpanel details added successfully"), 
+    ELECTION_REORDING(70141,"Election order updated successfully"),
+    VOTERS_DELETED(70142,"All voters deleted successfully for these election"), 
+    RELIGION_REORDERING(70143,"Religion reorder is updated successfully"),
+    CASTE_REORDERING(70144,"Caste reorder is updated successfully"),
+    SUBCASTE_REORDERED(70145,"SubCaste reorder is updated successfully"),
+    BOOTH_ORDER_UPDATED(70146,"Booth order updated successfully"),
+    LANGUAGE_ORDER_UPDATED(70147,"Booth order updated successfully"),
+    AVAILABILITY_ORDER_UPDATED(70148,"Availability order updated successfully"),
+    BENEFITSCHEME_ORDER_UPDATED(70149,"BenefitScheme order updated successfully"),
+    VOTER_EXPORT_INITIATED(70150,"Voter File export initiated"),
+    VOTER_EXPORT_STATUS_FETCHED(70151,"Voter File export status is fetched"),
+    TEMPLATE_ORDER_UPDATED(70152,"Template order updated successfully"),
+
+    PARTY_ORDER_UPDATED(70153,"Party order updated successfully"),
+    BANNER_ORDER_UPDATED(70154,"Banner order updated successfully"),
+
+
+	BULK_BOOTHS_UPLOADED(20123,"Bulk booths uploaded successfully"),
+	SECTION_CREATED(70153,"Section created  successfully"),
+	SECTION_UPDATED(70154,"Section updated  successfully"),
+	SECTION_DELETED(70155,"Section deleted  successfully"),
+
+	BULK_SECTIONS_UPLOADED(70156,"Bulk upload section successfully"),
+	EXPORT_SUCCESS(70157,"Voter data Excel generated successfully for election"),
+	FILE_DOWNLOAD_READY(70158,"Voter data Excel file ready to download"),
+	BULK_PARTMANAGERS_UPLOADED(70157,"Bulk part managers upload successfully"), 
+	USER_ACTIVATED(70159,"User Activated successfully"), 
+	USER_ALREADY_ACTIVE(70160,"User Already Active State"),
+	STATS_RETRIEVED(70161,"Gender list retrieved successfully"),
+	BULK_RELIGIONS_UPLOADED(70162,"Religion Bulk upload successfully"),
+	BULK_CASTES_UPLOADED(70163,"Caste Bulk upload successfully"),
+
+	BULK_SUBCASTES_UPLOADED(70164,"SubCaste Bulk upload successfully"), 
+	MEMBER_CREATED(70165,"member created successfully"),
+	MEMBER_DELETED(70166,"member deleted successfully"), 
+	VOTER_HISTORY_CREATED(70165,"Voter history created succesfully"), 
+	VOTER_HISTORY_FETCHED(70166,"Voter history fetched succesfully"), 
+	VOTER_HISTORY_UPDATED(70167,"Voter history updated succesfully"), 
+	VOTER_HISTORY_DELETED(70165,"Voter history deleted succesfully"), 
+	BULK_MEMBERS_UPLOAD_IN_QUEUE(70170,"Bulk members uploaded in queued successfully"), 
+	BULK_MEMBERS_CREATED(70171,"Bulk members created successfully"),
+	VOTER_UPDATED_VIDEO(70172,"Voter video uploaded successfully"),
+	AADHAAR_CREATED(70173,"Aadhar created successfully"), 
+	AADHAAR_FETCHED(70174,"Aadhar fetched successfully"), 
+	AADHAAR_DELETED(70175,"Aadhar deleted successfully"), 
+	OTP_REQUESTED(70176,"OTP requested successfully"),
+	AADHAAR_VERIFIED(70177,"Aadhar verified successfully"),
+	VOTER_HISTORY_ORDER_UPDATED(70178,"Voter history order updated succesfully"),
+	EXPORT_JOBS_FETCHED(70179,"Voter export jobs retrieved successfully"),
+	FLAG_UPDATED_SUCCESSFULLY(70180,"WhatsappForward updated successfully"), 
+	ISSUE_CREATED(70181,"Feedback created succesfully"),
+	 ISSUE_FOUND(70182,"Feed back found succesfully"),
+	 ISSUE_UPDATED(70183,"Feedback updated succesfully"),
+	  ISSUE_DELETED(70184,"Feedback deleted suceesfully"), 
+	  WHATSAPP_FOOTER_UPDATED_SUCCESSFULLY(70185,"Whatsapp Footer Updated suceesfully"),
+	   WHATSAPPFOOTER_GET_SUCCESSFULLY(70186,"Whatsapp Footer Fetched suceesfully"), 
+
+	   VOTER_EXPORT_DELETED(70187,"Voter export deleted suceesfully"), 
+	   ISSUE_ORDER_UPDATED (70188,"Issue order has been updated successfully"),
+	   USER_STATISTICS_FETCHED(70189,"User statistics fetched successfully"),
+	   FAMILY_MAPPING_MIGRATION(70189,"FamilyMapping migration successful"),
+	   PARTMANAGER_FETCHED(70190,"part details are fetched successful"),
+	   PARTMANAGER_PARTNO_AND_VULNERABILITY_UPDATED(70191,"Part number and vulnerability updated successfully"),
+	   PARTMANAGER_PARTNO_UPDATED(70192,"Part number updated successfully"),
+	   PARTMANAGER_VULNERABILITY_UPDATED(70193,"Vulnerability updated successfully"),
+	   SURVEY_FORM_CREATED(70194,"Survey form created successfully"),
+	   SURVEY_FORM_FOUND(70195,"Survey forms retrieved successfully"),
+	   SURVEY_FORM_UPDATED(70196,"Survey form updated successfully"),
+	   SURVEY_FORM_DELETED(70197,"Survey form deleted successfully"),
+	   SURVEY_FORM_STATUS_UPDATED(70198,"Survey form status updated successfully"),
+	   CATALOGUE_ITEMS_FETCHED(70199,"Catalogue Items fetched successfully"), 
+	   CATALOGUE_ITEM_FETCHED(70200,"Catalogue Item fetched successfully"),
+	   CATALOGUE_ITEM_DELETED(70201,"Catalogue Item deleted successfully"),
+	   CATALOGUE_ITEM_CREATED(70202,"Catalogue Item created successfully"), 
+	   CATALOGUE_ITEM_UPDATED(70203,"Catalogue Item updated successfully"), 
+	   BANNER_ACTIVE_STATUS_UPDATED_SUCCESSFULLY(70204,"Banner status updated successfully"), 
+	   SURVEY_FORM_SUBMISSION_SAVED(70205,"Survey form submission saved successfully"),
+	   VOTER_STATUSES_RETRIEVED(70206,"Voter Status retrieved successfully"),
+	   SUBMISSIONS_FOUND(70207,"Submission forms retrieved successfully"), 
+	   SLIP_BOX_CREATED(70208,"slip box created successfully"),
+	   SLIP_BOXES_FOUND(70209,"slip box retrieved successfully"),
+	   SLIP_BOXES_DELETED(70210,"slip boxes deleted successfully"), 
+	   SLIP_BOX_UPDATED(70211,"slip box updated successfully"),
+	   SLIP_BOX_DELETED(70212,"Slip box deleted successfully"),
+	   BULK_SLIPBOXES_UPLOADED(70213,"Bulk slip box uploaded successfully"), 
+	   CATALOGUE_ITEM_ORDER_UPDATED(70214,"Catalogue item order updated successfully"), 
+	   SURVEY_EXPORT_INITIATED(70215,"Survey submission initiated successfully"), 
+	   SURVEY_EXPORT_JOBS_FOUND(70216,"Survey export jobs found successfully"), 
+	   DEFAULT_SLIP_BOXES_CREATED(70217,"Default slipBox created successfully for older elections"), 
+	   SUBMISSIONS_DELETED(70218,"Survey form submissions deleted successfully"), 
+	   SURVEY_FORM_ORDER_UPDATED(70219,"Survey form order updated successfully"), 
+	   SURVEY_FORM_FIELDS_REORDERED(70220,"Survey form fields reordered successfully"), 
+	   PART_NUMBERS_FOUND(70221,"Part numbers fetched successfully"),
+	   VOTER_STATS_RETRIEVED(70222,"Voter stats retrieved successfully"), 
+	   ISSUES_FETCHED(70223,"Feed back issues fetched successfully"), 
+	   CASTE_CATEGORY_CREATED(70224,"Caste category created successfully"), 
+	   CASTE_CATEGORY_DELETED(70225,"Caste category deleted successfully"), 
+	   CASTE_CATEGORY_UPDATED(70226,"Caste category updated successfully"), 
+	   CASTE_CATEGORY_REORDERING(70227,"Caste category reordering updated successfully"), 
+	   CASTE_CATEGORIES_FETCHED(70228,"Caste category fetched successfully"), 
+	   FRIEND_ID_ASSIGNED(70228,"Friends assigend to voters successfully"), 
+	   FRIEND_ID_DELETED(70229,"Friends mapping deleted successfully"),      
+
+	   DATA_MIGRATION_COMPLETED(70224,"Data migration completed successfully"),
+	   DATA_MIGRATION_INITIATED(70225,"Data migration initiated successfully"),
+	   
+	   // Poll Day Chart Export
+	   POLL_DAY_EXPORT_JOB_CREATED(70230,"Poll day export job created successfully"),
+	   POLL_DAY_EXPORT_JOB_STATUS_RETRIEVED(70231,"Poll day export job status retrieved successfully"),
+	   
+	   // New migration messages
+	   MIGRATION_STARTED(70231, "Migration job started successfully"),
+	   MIGRATION_STATUS_RETRIEVED(70232, "Migration status retrieved successfully"), 
+	   MIGRATION_JOBS_RETRIEVED(70233, "Migration jobs retrieved successfully"),
+	   MIGRATION_CANCELLED(70234, "Migration job cancelled successfully"),
+	   CLEANUP_COMPLETED(70235, "MongoDB cleanup completed successfully"),
+	   VALIDATION_COMPLETED(70236, "Data validation completed successfully"),
+	   MIGRATION_STATS_RETRIEVED(70237, "Migration statistics retrieved successfully"), 
+	   CADRE_REPORT_CREATED(70238, "Cadre report created successfully"),
+	   CADRE_REPORT_UPDATED(70239, "Cadre report updated successfully"),
+	   CADRE_REPORTS_FETCHED(70240, "Cadre report fetched successfully"), 
+	   POLL_DAY_REPORT_UPDATED(70241, "Pollday reports updated successfully"), 
+	   POLL_DAY_REPORTS_FETCHED(70242, "Pollday reports fetched successfully"), 
+	   FAMILY_MAPPING_COMPLETED(70243, "Family mapping by house number completed successfully"), 
+	   DASHBOARD_REPORT_CREATED(70244, "Election Dash board reports created successfully"), 
+	   DASHBOARD_REPORTS_FETCHED(70245, "Election Dash board reports fected successfully"), 
+	   FAMILY_MAPPED(70246, "Family map successfully"), 
+	   SURVEY_EXPORT_JOBS_DELETED(70247, "survey export job deleted successfully"), 
+
+	   FRIEND_DELETED(70248, "Friend deleted successfully"),
+	   PDF_PROCESSED(70249, "PDF upload successfully"), 
+
+	   // Family Mapping Job Success Messages
+	   FAMILY_MAPPING_STARTED(70249, "Family mapping job started successfully"),
+	   FAMILY_MAPPING_STATUS_RETRIEVED(70250, "Family mapping job status retrieved successfully"), 
+	   PARTMANAGER_ORDER_UPDATED(70251, "PartManager reorder updated successfully"), 
+	   OTP_SENT(70252, "OTP sent successfully"), 
+	   OTP_REQUIRED_UPDATED(70253, "OTP required updated successfully"), 
+	   VOLUNTEER_ADMIN_UPDATED(70254, "Updated admin_user_id for volunteer records for election_id"), 
+	   VOTER_NO_IMAGE_TO_DELETE(70255, "No image exists for this voter"), 
+	   VOTER_IMAGE_DELETED(70256, "Voter image successfully deleted"), 
+	   DATA_MIGRATED(70257, "Data migration for benefit schemes successfully done"), 
+	   DYNAMIC_FIELD_FOUND(70258,"Dynamic fields retrieved successfully"),
+	   DYNAMIC_FIELD_UPDATED(70259,"Dynamic field updated successfully"),
+	   DYNAMIC_FIELD_DELETED(70260,"Dynamic field(s) deleted successfully"),
+	   DYNAMIC_FIELD_ORDER_UPDATED(70261,"Dynamic field order updated successfully"), 
+	   VOTER_FIELD_ORDER_UPDATED(70262,"Voter field order updated successfully"), 
+	   VOTER_FIELD_ORDER_FOUND(70263,"Voter field order found successfully"), 
+	   VOLUNTEER_EXPORT_INITIATED(70264,"Volunteers field export initiated successfully"), 
+	   VOLUNTEER_JOB_STATUS_RETRIEVED(70265,"Volunteers Job status retrieved successfully"),
+	   EXPORT_INITIATED(70266,"Part Manager export initiated successfully"),
+
+	   ;
+
+	private final int code;
+	private final String message;
+
+	ThedalSuccess(int code, String message) {
+		this.code = code;
+		this.message = message;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+}
+
+

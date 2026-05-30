@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Family Voter Cards</title>
+<link rel="stylesheet" href="classpath:static/pdf/family_cards.css" />
+<style>
+/* Inline fallback if external not resolved */
+body { font-family: 'NotoSansTamil','Arial',sans-serif; font-size:11px; margin:24px; color:#263238; }
+.header { font-size:13px; margin-bottom:14px; }
+.cards { width:100%; }
+.card { border:1px solid #B0BEC5; margin:10px 0 16px; box-shadow:0 0 0 0 #000; }
+.card-header { background:linear-gradient(#1976D2,#0D47A1); color:#fff; padding:4px 8px; display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:10px; }
+.badges span { background:#FFF3E0; border:1px solid #FB8C00; color:#E65100; font-size:9px; padding:2px 4px; margin-left:4px; border-radius:2px; }
+.card-body { padding:6px 10px 4px; line-height:1.15; }
+.names { margin-bottom:4px; }
+.addr { margin:4px 0; }
+.footer { background:#ECEFF1; padding:4px 10px; font-size:10px; display:flex; gap:20px; }
+.label { font-weight:600; }
+</style>
+</head>
+<body>
+<div class="header">Family Voter Cards Export - Generated [[${generatedAt}]]</div>
+<div class="cards">
+  <div th:each="v : ${voters}" class="card">
+    <div class="card-header">
+      <div>Serial: <span th:text="${v.serialNo}"></span> Part: <span th:text="${v.partNo}"></span></div>
+      <div class="badges"><span>R</span><span>A</span><span>P</span></div>
+    </div>
+    <div class="card-body">
+      <div class="names">
+        <div th:text="${v.voterFnameEn} + ' ' + ${v.voterLnameEn}"></div>
+        <div th:text="${v.voterFnameL1} + ' ' + ${v.voterLnameL1}"></div>
+        <div th:text="${v.rlnFnameEn} + ' ' + ${v.rlnLnameEn}"></div>
+        <div th:text="${v.rlnFnameL1} + ' ' + ${v.rlnLnameL1}"></div>
+      </div>
+      <div th:text="${v.age} + ' ' + ${v.rlnType}"></div>
+      <div class="addr" th:text="${v.fullAddress}"></div>
+      <div>Phone: <span th:text="${v.mobileNo}"></span> Caste: <span th:text="${v.caste != null ? v.caste.casteName : ''}"></span></div>
+    </div>
+    <div class="footer">
+      <div>Family: <span th:text="${v.familyCount}"></span></div>
+      <div>Party: <span th:text="${v.party != null ? v.party.partyName : ''}"></span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

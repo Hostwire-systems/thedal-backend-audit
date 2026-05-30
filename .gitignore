@@ -1,0 +1,52 @@
+logs/
+**/logs/
+**/target/
+*.log
+hs_err_pid*.log
+replay_pid*.log
+
+# Environment Variables - NEVER COMMIT THESE
+.env
+.env.*
+!.env.example
+.env.local
+.env.production
+.env.staging
+.env.development
+
+# Application Properties (if contains sensitive data)
+# thedal-app/src/main/resources/application.properties
+
+# Sensitive configuration files
+application-*.properties
+application-*.yml
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+BOOT-INF/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# OCR extraction results - generated files
+extraction_results/
+temp_uploads/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# ML Model weights (download via scripts)
+*.onnx
+*.caffemodel

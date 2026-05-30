@@ -1,0 +1,16 @@
+# Production requirements for Python OCR Service
+flask==2.3.3
+flask-cors==4.0.0
+opencv-python-headless==4.8.1.78
+numpy==1.24.3
+pillow==10.0.1
+PyMuPDF==1.23.8
+scikit-learn==1.3.0
+werkzeug==2.3.7
+gunicorn==21.2.0
+requests==2.31.0
+psutil==5.9.5
+# OCR and ML dependencies
+pytesseract==0.3.10
+onnxruntime==1.18.0
+joblib==1.3.2

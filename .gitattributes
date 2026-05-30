@@ -1,0 +1,15 @@
+# Git LFS tracking disabled due to account limits
+# Models stored as regular files (manageable sizes: <10MB each)
+# *.onnx filter=lfs diff=lfs merge=lfs -text
+# *.caffemodel filter=lfs diff=lfs merge=lfs -text
+# *.pb filter=lfs diff=lfs merge=lfs -text
+# *.pth filter=lfs diff=lfs merge=lfs -text
+# *.h5 filter=lfs diff=lfs merge=lfs -text
+# *.joblib filter=lfs diff=lfs merge=lfs -text
+
+# Binary files
+*.pdf binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.zip binary

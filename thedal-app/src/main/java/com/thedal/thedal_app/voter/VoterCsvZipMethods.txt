@@ -1,0 +1,161 @@
+// CSV ZIP Generation Methods for Memory-Optimized Exports
+// These methods should be added to VoterServiceImpl.java around line 6775
+
+private File generateCsvZipFileStreamed(Specification<VoterEntity> spec, Integer limit, Long jobId, List<String> columns) throws IOException {
+	log.info("EXPORT_FLOW: Starting generateCsvZipFileStreamed for jobId: {}", jobId);
+
+	List<String> selectedColumns = VoterCsvWriter.resolveColumns(columns);
+	Path exportDir = Paths.get(System.getProperty("java.io.tmpdir"), "thedal-exports");
+	java.nio.file.Files.createDirectories(exportDir);
+	File zipFile = exportDir.resolve("voter-export-" + jobId + ".zip").toFile();
+
+	int processed = 0;
+	int page = 0;
+	try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
+	     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zos, StandardCharsets.UTF_8))) {
+
+		zos.putNextEntry(new ZipEntry("voter-export-" + jobId + ".csv"));
+		writer.write(VoterCsvWriter.header(selectedColumns));
+		writer.newLine();
+
+		while (true) {
+			Pageable pageable = PageRequest.of(page, BATCH_SIZE);
+			Page<VoterEntity> voterPage = voterRepository.findAll(spec, pageable);
+			if (voterPage.isEmpty()) {
+				break;
+			}
+
+			for (VoterEntity voter : voterPage.getContent()) {
+				if (voter != null && voter.getVoterId() != null) {
+					writer.write(VoterCsvWriter.row(voter, selectedColumns));
+					writer.newLine();
+					processed++;
+
+					if (limit != null && processed >= limit) {
+						log.info("EXPORT_FLOW: Reached CSV limit {} for jobId: {}", limit, jobId);
+						writer.flush();
+						zos.closeEntry();
+						return zipFile;
+					}
+				}
+			}
+
+			// Clear EntityManager to release memory after each batch
+			if (entityManager != null) {
+				entityManager.clear();
+			}
+			
+			// Progress logging every 10K records
+			if (processed > 0 && processed % 10000 == 0) {
+				log.info("EXPORT_FLOW: Progress - exported {} records for jobId: {}", processed, jobId);
+			}
+
+			page++;
+		}
+
+		writer.flush();
+		zos.closeEntry();
+
+		log.info("EXPORT_FLOW: Generated CSV zip with {} records at {} for jobId: {}", processed, zipFile.getAbsolutePath(), jobId);
+		return zipFile;
+	} catch (Exception e) {
+		log.error("EXPORT_FLOW: Error generating CSV zip for jobId: {}: {}", jobId, e.getMessage(), e);
+		if (zipFile.exists() && !zipFile.delete()) {
+			log.warn("EXPORT_FLOW: Failed to delete temp csv zip {} for jobId: {}", zipFile.getAbsolutePath(), jobId);
+		}
+		throw new IOException("Failed to generate CSV zip: " + e.getMessage(), e);
+	}
+}
+
+private File generateCsvZipFileStreamedOptimized(Long accountId, Long electionId, Integer limit, Long jobId, List<String> columns) throws IOException {
+	log.info("EXPORT_FLOW: Starting generateCsvZipFileStreamedOptimized for jobId: {}", jobId);
+
+	List<String> selectedColumns = VoterCsvWriter.resolveColumns(columns);
+	Path exportDir = Paths.get(System.getProperty("java.io.tmpdir"), "thedal-exports");
+	java.nio.file.Files.createDirectories(exportDir);
+	File zipFile = exportDir.resolve("voter-export-" + jobId + ".zip").toFile();
+
+	int processed = 0;
+	int page = 0;
+	try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
+	     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zos, StandardCharsets.UTF_8))) {
+
+		zos.putNextEntry(new ZipEntry("voter-export-" + jobId + ".csv"));
+		writer.write(VoterCsvWriter.header(selectedColumns));
+		writer.newLine();
+
+		while (true) {
+			Pageable pageable = PageRequest.of(page, BATCH_SIZE, Sort.by(Sort.Order.asc("partNo"), Sort.Order.asc("serialNo")));
+			Page<VoterEntity> voterPage = voterRepository.findAllForExportWithRelationships(accountId, electionId, pageable);
+			if (voterPage.isEmpty()) {
+				break;
+			}
+
+			for (VoterEntity voter : voterPage.getContent()) {
+				if (voter != null && voter.getVoterId() != null) {
+					writer.write(VoterCsvWriter.row(voter, selectedColumns));
+					writer.newLine();
+					processed++;
+
+					if (limit != null && processed >= limit) {
+						log.info("EXPORT_FLOW: Reached OPTIMIZED CSV limit {} for jobId: {}", limit, jobId);
+						writer.flush();
+						zos.closeEntry();
+						return zipFile;
+					}
+				}
+			}
+
+			// Clear EntityManager to release memory after each batch
+			if (entityManager != null) {
+				entityManager.clear();
+			}
+			
+			// Progress logging every 10K records
+			if (processed > 0 && processed % 10000 == 0) {
+				log.info("EXPORT_FLOW: Progress - exported {} records for jobId: {}", processed, jobId);
+			}
+
+			page++;
+		}
+
+		writer.flush();
+		zos.closeEntry();
+
+		log.info("EXPORT_FLOW: Generated OPTIMIZED CSV zip with {} records at {} for jobId: {}", processed, zipFile.getAbsolutePath(), jobId);
+		return zipFile;
+	} catch (Exception e) {
+		log.error("EXPORT_FLOW: Error generating OPTIMIZED CSV zip for jobId: {}: {}", jobId, e.getMessage(), e);
+		if (zipFile.exists() && !zipFile.delete()) {
+			log.warn("EXPORT_FLOW: Failed to delete OPTIMIZED csv zip {} for jobId: {}", zipFile.getAbsolutePath(), jobId);
+		}
+		throw new IOException("Failed to generate OPTIMIZED CSV zip: " + e.getMessage(), e);
+	}
+}
+
+// ================================
+// Integration Changes Needed:
+// ================================
+
+// 1. In processVoterExportS3() around line 5915, replace:
+//    File excelFile = generateExcelFileStreamed(spec, limit, job.getJobId(), selectedColumns);
+//    With:
+//    File csvZipFile = generateCsvZipFileStreamed(spec, limit, job.getJobId(), selectedColumns);
+
+// 2. In processVoterExportLocal() around line 6000, replace:
+//    File excelFile = generateExcelFileStreamed(spec, limit, job.getJobId(), selectedColumns);
+//    With:
+//    File csvZipFile = generateCsvZipFileStreamed(spec, limit, job.getJobId(), selectedColumns);
+
+// 3. In processVoterExportS3WithFilters() around line 6515, replace:
+//    File excelFile = generateExcelFileStreamedOptimized(accountId, electionId, limit, job.getJobId(), selectedColumns);
+//    With:
+//    File csvZipFile = generateCsvZipFileStreamedOptimized(accountId, electionId, limit, job.getJobId(), selectedColumns);
+
+// 4. In processVoterExportLocalWithFilters() around line 6600, replace:
+//    File excelFile = generateExcelFileStreamedOptimized(accountId, electionId, limit, job.getJobId(), selectedColumns);
+//    With:
+//    File csvZipFile = generateCsvZipFileStreamedOptimized(accountId, electionId, limit, job.getJobId(), selectedColumns);
+
+// 5. Update S3 upload calls to use .zip extension instead of .xlsx
+// 6. Update file deletion logic to handle .zip files

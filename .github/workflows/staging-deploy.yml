@@ -1,0 +1,27 @@
+name: staging deployment workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main-pre
+      
+jobs:
+  deploy:
+    runs-on: [self-hosted, staging]
+    if: ${{ always() }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Stop service
+        run: echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop thedal-service
+
+      - name: Build and Deploy
+        working-directory: /home/actions-runner-user/actions-runner/_work/thedal-backend/thedal-backend/thedal-app/
+        run: /home/actions-runner-user/actions-runner/_work/thedal-backend/thedal-backend/thedal-app/mvnw clean install
+        
+      - name: Start Process
+        run: echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start thedal-service
+

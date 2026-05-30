@@ -1,0 +1,51 @@
+{
+ 
+    "registrationSuccess":{
+	 "id":"registrationSuccess",
+ 	  "subject":"registration Success",
+ 	  "body":"<h1>Registration  Successful</h1><p>Dear {username},</p><p>Your Account Registerted Successfully.</p><p>Best,</p><p>Your Team</p>",
+ 	  "url":"http://localhost:3000/app",
+ 	  "message":"Your registration was successful"
+ 	  },
+
+	  "deleteElection":{
+	 "id":"deleteElection",
+ 	  "subject":"Deleted Success",
+ 	  "body":"<h1>Registration  Successful</h1><p>Dear {userId},</p><p>Your Account Deleted Successfully.</p><p>Best,</p><p>Your Team</p>",
+ 	  "url":"http://localhost:3000/app",
+ 	  "message":"Deleted successful"
+ 	  },
+
+	  "update":{
+	  "id":"update",
+	  "subject":"update success",
+ 	  "body":"<h1>Registration  Successful</h1><p>Dear {name},</p><p>Your Updated Successfully.</p><p>Best,</p><p>Your Team</p>",
+ 	  "url":"http://localhost:3000/app",
+ 	  "message":"update success"
+
+	  },
+
+		"bulkUploadStarted": {
+		  "id": "bulkUploadStarted",
+		  "subject": "Bulk Upload Started",
+		  "body": "<h1>Bulk Upload Started</h1><p>Election ID: {electionId}</p><p>File: {fileName}</p><p>Upload ID: {uploadId}</p>",
+		  "url": "http://localhost:3000/app/bulk-uploads",
+		  "message": "Bulk upload has started successfully."
+		},
+		"bulkUploadCompleted": {
+		  "id": "bulkUploadCompleted",
+		  "subject": "Bulk Upload Completed",
+		  "body": "<h1>Bulk Upload Completed</h1><p>Election ID: {electionId}</p><p>File: {fileName}</p><p>Upload ID: {uploadId}</p><p>Status: Success</p>",
+		  "url": "http://localhost:3000/app/bulk-uploads",
+		  "message": "Bulk upload completed successfully."
+		},
+		"bulkUploadFailed": {
+		"id": "bulkUploadFailed",
+		"subject": "Bulk Upload Failed",
+		"body": "<h1>Bulk Upload Failed</h1><p>Election ID: {electionId}</p><p>File: {fileName}</p><p>Upload ID: {uploadId}</p><p>Status: Failed</p>",
+		"url": "http://localhost:3000/app/bulk-uploads",
+		"message": "Bulk upload failed. Please check the file and try again."
+		}
+
+	
+}

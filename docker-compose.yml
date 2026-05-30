@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  thedal-app:
+    build:
+      context: .
+      dockerfile: thedal-app/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # Database Configuration
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      
+      # MongoDB Configuration
+      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      
+      # JWT Configuration
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ACCESS_TOKEN_EXPIRATION=${JWT_ACCESS_TOKEN_EXPIRATION}
+      - JWT_REFRESH_TOKEN_EXPIRATION=${JWT_REFRESH_TOKEN_EXPIRATION}
+      
+      # AWS Configuration
+      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
+      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
+      - AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT}
+      - AWS_S3_REGION=${AWS_S3_REGION}
+      - AWS_S3_IMAGE_BUCKET=${AWS_S3_IMAGE_BUCKET}
+      - AWS_S3_NOTIFICATION_BUCKET=${AWS_S3_NOTIFICATION_BUCKET}
+      - AWS_S3_NOTIFICATION_FOLDER=${AWS_S3_NOTIFICATION_FOLDER}
+      - AWS_S3_BANNER_BUCKET=${AWS_S3_BANNER_BUCKET}
+      - AWS_S3_FILES_BUCKET=${AWS_S3_FILES_BUCKET}
+      - AWS_S3_CADRE_BUCKET=${AWS_S3_CADRE_BUCKET}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_SQS_QUEUE_URL=${AWS_SQS_QUEUE_URL}
+      
+      # Payment Gateway Configuration
+      - CASHFREE_CLIENT_ID=${CASHFREE_CLIENT_ID}
+      - CASHFREE_CLIENT_SECRET=${CASHFREE_CLIENT_SECRET}
+      - CASHFREE_PUBLIC_KEY_PATH=${CASHFREE_PUBLIC_KEY_PATH}
+      - CASHFREE_OTP_URL=${CASHFREE_OTP_URL}
+      - CASHFREE_VERIFY_URL=${CASHFREE_VERIFY_URL}
+      
+      # Email Configuration
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_SMTP_AUTH=${MAIL_SMTP_AUTH}
+      - MAIL_SMTP_STARTTLS=${MAIL_SMTP_STARTTLS}
+      - SENDGRID_KEY=${SENDGRID_KEY}
+      - SENDGRID_EMAIL=${SENDGRID_EMAIL}
+      - NOTIFICATION_EMAIL_RECIPIENT=${NOTIFICATION_EMAIL_RECIPIENT}
+      
+      # Redis Configuration
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_SSL=${REDIS_SSL}
+      
+      # SMS Configuration
+      - MSG91_AUTHKEY=${MSG91_AUTHKEY}
+      - MSG91_TEMPLATE_ID=${MSG91_TEMPLATE_ID}
+      
+      # OAuth Configuration
+      - GOOGLE_OAUTH_CLIENT_ID=${GOOGLE_OAUTH_CLIENT_ID}
+      - GOOGLE_OAUTH_CLIENT_SECRET=${GOOGLE_OAUTH_CLIENT_SECRET}
+      - GOOGLE_OAUTH_REDIRECT_URI=${GOOGLE_OAUTH_REDIRECT_URI}
+      
+      # Application URLs
+      - THEDAL_DOMAIN_NAME=${THEDAL_DOMAIN_NAME}
+      - THEDAL_UI_URL=${THEDAL_UI_URL}
+      - THEDAL_SERVER_URL=${THEDAL_SERVER_URL}
+      
+      # Python OCR Service Configuration
+      - PYTHON_OCR_SERVICE_URL=${PYTHON_OCR_SERVICE_URL}
+      - PYTHON_OCR_SERVICE_TIMEOUT=${PYTHON_OCR_SERVICE_TIMEOUT}
+      - PYTHON_OCR_SERVICE_MAX_RETRIES=${PYTHON_OCR_SERVICE_MAX_RETRIES}
+      - PYTHON_OCR_SERVICE_RETRY_DELAY=${PYTHON_OCR_SERVICE_RETRY_DELAY}
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Python OCR Service
+  python-ocr-service:
+    build:
+      context: ./python-ocr-service
+      dockerfile: Dockerfile.ocr
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./python-ocr-service:/app
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  thedal-reporting:
+    build:
+      context: .
+      dockerfile: thedal-app/Dockerfile
+    depends_on:
+      - thedal-app
+    ports:
+      - "9091:9091"
+    environment:
+      - SPRING_PROFILES_ACTIVE=reporting,staging
+      - REPORTING_DB_URL=${REPORTING_DB_URL}
+      - REPORTING_DB_USERNAME=${REPORTING_DB_USERNAME}
+      - REPORTING_DB_PASSWORD=${REPORTING_DB_PASSWORD}
+      - REPORTING_DB_POOL_SIZE=${REPORTING_DB_POOL_SIZE:-6}
+      - REPLICA_LAG_ALERT_SECONDS=${REPLICA_LAG_ALERT_SECONDS:-45}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/reporting/internal/replica/lag"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 50s
+
+volumes:
+  logs:
